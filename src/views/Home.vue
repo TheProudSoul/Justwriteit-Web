@@ -188,7 +188,7 @@ export default {
               } else {
                 let dirPath = this.currentNode.data.leaf
                   ? this.currentNode.data.dirPath
-                  : this.currentNode.data.pathName + "\\";
+                  : this.currentNode.data.pathName + "/";
                 if (dirPath == ".") newPath = title;
                 else {
                   newPath = dirPath + title;
@@ -242,7 +242,7 @@ export default {
               } else {
                 let dirPath = this.currentNode.data.leaf
                   ? this.currentNode.data.dirPath
-                  : this.currentNode.data.pathName + "\\";
+                  : this.currentNode.data.pathName + "/";
                 if (dirPath == ".") newPath = value + ".md";
                 else {
                   newPath = dirPath + value;
@@ -315,6 +315,7 @@ export default {
                   this.currentNode.data.leaf
                 )
                 .then(res => {
+                  console.log(res)
                   if (res.data.errCode == "00") {
                     this.$refs.filetree.deleteNode(this.currentNode);
                     this.$message({
