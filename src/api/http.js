@@ -4,7 +4,7 @@ import router from '../router'
 
 // create an axios instance
 const service = axios.create({
-    baseURL: 'http://47.115.40.131:9995', // url = base url + request url
+    // baseURL: 'http://47.115.40.131:9999', // url = base url + request url
     // withCredentials: true, // send cookies when cross-domain requests
     timeout: 5000 // request timeout
 
