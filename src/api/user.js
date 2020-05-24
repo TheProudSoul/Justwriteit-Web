@@ -23,3 +23,10 @@ export function sendResetLink(email) {
         params: email
     })
 }
+
+export function getUserInformation(user) {
+    return request({
+        url: `/user/${user}`,
+        method: 'get',
+    })
+}

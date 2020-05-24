@@ -122,7 +122,6 @@ export default {
     ...mapState({
       username: state => state.Account.username,
       email: state => state.Account.email,
-      isLogin: state => state.Account.isLogin,
       userId: state => state.Account.userId,
       doc: state => state.Editor.doc
     })
@@ -137,6 +136,10 @@ export default {
     this.$api.editorApi.listFileSystem(this.userId).then(res => {
       console.log(res.data);
       this.nodes = res.data.data;
+    });
+    this.$api.userApi.getUserInformation(this.userId).then(res => {
+      console.log(res.data);
+      this.$store.dispatch("SET_USER_INFO", res.data.data);
     });
   },
   methods: {

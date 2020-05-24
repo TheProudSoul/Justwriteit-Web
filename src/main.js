@@ -18,22 +18,13 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.config.productionTip = false
 
 
-// 使用钩子函数对路由进行权限跳转
-router.beforeEach((to, from, next) => {
-  const userId = localStorage.getItem('userId')
-  if (userId == '' && to.path !== '/login') {
-    next('/login')
-  } else {
-    next()
-  }
-})
-
 new Vue({
   router,
   store,
   render: h => h(App),
   // 储存登录状态
   created() {
+    
     if (localStorage.getItem('userId') === null) {
       localStorage.setItem('userId', '')
     }

@@ -39,7 +39,7 @@ export default {
     handleCommand(command) {
         if(command=='logout'){
           console.log('logout')
-      this.$store.commit('logout')
+      this.$store.dispatch('logout')
       this.$router.push('/login');
         }
       }

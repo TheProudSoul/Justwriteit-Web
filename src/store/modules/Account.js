@@ -2,14 +2,13 @@ const state = {
   username: '',
   userId: 0,
   isLogin: false,
-  email: ''
+  email: '',
+  Authorization: localStorage.getItem('Authorization') ? localStorage.getItem('Authorization') : ''
 }
 
 const mutations = {
   COMMIT_USERNAME(state, username) {
     state.username = username
-    localStorage.setItem('username', username)
-
   },
   COMMIT_USERID(state, userId) {
     state.userId = userId
@@ -17,35 +16,39 @@ const mutations = {
   },
   COMMIT_EMAIL(state, email) {
     state.email = email
-    localStorage.setItem('email', email)
   },
   COMMIT_LOGIN(state) {
     state.isLogin = true
   },
+  COMMIT_AUTHORIZATION(state, Authorization) {
+    state.Authorization = Authorization
+    localStorage.setItem('Authorization', Authorization)
+  },
   COMMIT_LOGOUT(state) {
     state.isLogin = false
     state.email = ''
-    localStorage.setItem('email', '')
     state.userId = 0
     localStorage.setItem('userId', '')
     state.username = ''
-    localStorage.setItem('username', '')
-
-
+    state.Authorization = ''
+    localStorage.setItem('Authorization','')
   }
 }
 
 const actions = {
   login({ commit, state }, payload) {
     console.log(payload)
-    // do something async
-    commit('COMMIT_USERNAME', payload.username)
     commit('COMMIT_USERID', payload.id)
-    commit('COMMIT_EMAIL', payload.email)
+    commit('COMMIT_AUTHORIZATION', payload.token)
     commit('COMMIT_LOGIN')
   },
   logout({ commit }) {
     commit('COMMIT_LOGOUT')
+  },
+  SET_USER_INFO({commit}, payload){
+    console.log(payload)
+    commit('COMMIT_USERNAME', payload.username)
+    commit('COMMIT_EMAIL', payload.email)
   }
 }
 

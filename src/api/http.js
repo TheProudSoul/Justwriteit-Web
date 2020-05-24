@@ -4,21 +4,18 @@ import router from '../router'
 
 // create an axios instance
 const service = axios.create({
-    // baseURL: 'http://47.115.40.131:9999', // url = base url + request url
+    baseURL: 'http://localhost:9999', // url = base url + request url
     // withCredentials: true, // send cookies when cross-domain requests
-    timeout: 5000 // request timeout
+    timeout: 5000, // request timeout
 
-  })
-  
-service.defaults.headers.common['Content-Type']='application/json;charset=UTF-8'
+})
+
+service.defaults.headers.common['Content-Type'] = 'application/json;charset=UTF-8'
+service.defaults.headers.common['Authorization'] = `Super Knowledge ${localStorage.getItem('Authorization')}`
 
 axios.interceptors.request.use(function (config) {
     // Do something before request is sent
     config.data = JSON.stringify(config.data);
-    if(config.headers['Content-Type'])
-    config.headers = {
-        'Content-Type': 'application/json;charset=UTF-8'
-    }
     return config;
 }, function (error) {
     // Do something with request error

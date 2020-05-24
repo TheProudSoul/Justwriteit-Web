@@ -9,8 +9,8 @@
       label-width="100px"
       style="margin-right:100px"
     >
-      <el-form-item label="Username" prop="username">
-        <el-input v-model="loginForm.username"></el-input>
+      <el-form-item label="Email" prop="email">
+        <el-input v-model="loginForm.email"></el-input>
       </el-form-item>
       <el-form-item label="Password" prop="password" style="margin-bottom:0">
         <el-input type="password" v-model="loginForm.password" autocomplete="off"></el-input>
@@ -34,11 +34,11 @@
 </template>
 <script>
 export default {
-  name:"Login",
+  name: "Login",
   data() {
-    const checkUsername = (rule, value, callback) => {
+    const checkEmail = (rule, value, callback) => {
       if (value === "") {
-        return callback(new Error("Username can not be empty"));
+        return callback(new Error("Email can not be empty"));
       } else {
         callback();
       }
@@ -55,15 +55,13 @@ export default {
     return {
       loginForm: {
         password: "testtest",
-        username: "Test"
+        email: "test@test.com"
       },
       validateForm: {
         password: [
           { required: true, validator: validatePassword, trigger: "blur" }
         ],
-        username: [
-          { required: true, validator: checkUsername, trigger: "blur" }
-        ]
+        email: [{ required: true, validator: checkEmail, trigger: "blur" }]
       }
     };
   },
@@ -71,16 +69,13 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$api.userApi.login(this.loginForm).then(res => {
+          this.$api.userApi
+            .login(this.loginForm)
+            .then(res => {
               // redirct
-              console.log(res.data)
-              this.$router.push('/home');
-              if (res.data.errCode == "00") {
-            this.$store.dispatch("login", res.data.data);
-            this.$router.push('home');
-          } else {
-            // 
-          }
+              console.log(res.data);
+              this.$store.dispatch("login", res.data);
+              this.$router.push("home");
             })
             .catch(err => {
               console.log(err);
