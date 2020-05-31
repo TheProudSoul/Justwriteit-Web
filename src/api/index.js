@@ -1,7 +1,8 @@
+import * as fileApi from "./file"
+import * as imageApi from "./image"
+import * as notificationApi from "./notification"
 import * as userApi from "./user"
-import * as editorApi from "./editor"
+import * as versionControlApi from "./versionControl"
 
-export default {
-  userApi,
-  editorApi
-};
+
+export default { fileApi, imageApi, notificationApi, userApi, versionControlApi }

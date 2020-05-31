@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import store from '@/store'
+import api from '@/api'
 
 Vue.use(VueRouter)
 
@@ -8,53 +9,66 @@ const router = new VueRouter({
   routes: [
     {
       path: '/',
-      redirect: '/home'
+      component: () => import('@/views/dashboard/index'),
+      children: [
+        {
+          name: 'dashboard-library',
+          path: '/',
+          component: () => import('@/views/dashboard/Library'),
+        }, {
+          name: 'Version Control',
+          path: '/version-control',
+          component: () => import('@/views/dashboard/VersionControl'),
+        }, {
+          name: 'Upload',
+          path: '/picbed/upload',
+          component: () => import('@/views/dashboard/Upload'),
+        }, {
+          name: 'Gallery',
+          path: '/picbed/gallery',
+          component: () => import('@/views/dashboard/Gallery'),
+        }, {
+          name: 'Settings',
+          path: '/settings',
+          component: () => import('@/views/dashboard/Settings'),
+        },
+      ]
     },
     {
-      path: '/home',
-      name: 'Home',
-      component: Home
-    },
-    {
-      path: '/about',
-      name: 'About',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '../components/MainView.vue')
-      // component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+      path: '/library',
+      name: 'library',
+      component: () => import('../views/library/index'),
+      children: [
+        {
+          name: 'Viewer',
+          path: '/library',
+          component: () => import('../views/library/components/Viewer'),
+        }, {
+          name: 'Editor',
+          path: '/library/edit',
+          component: () => import('../views/library/components/Editor'),
+        }
+      ]
     },
     {
       path: '/registration',
       name: 'registration',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '../views/Registration.vue')
+      component: () => import('../views/Registration.vue')
     },
     {
       path: '/login',
       name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
+      component: () => import('../views/LoginPage.vue')
     },
     {
       path: '/forget-password',
       name: 'forget-password',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '../views/ForgetPassword.vue')
+      component: () => import('../views/ForgetPassword.vue')
     },
     {
       path: '/error',
       name: 'error',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '../views/Error.vue')
+      component: () => import('../views/Error.vue')
     },
     { path: '*', redirect: '/error', hidden: true }
   ]
@@ -62,14 +76,27 @@ const router = new VueRouter({
 
 // 使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
-  if(to.path === '/login'|| to.path === '/registration'|| to.path === '/forget-password'){
+  if (store.state.account.isLogin) {
     next();
-  } else {
-    const token = localStorage.getItem('Authorization');
-    if (token === null || token === '') {
+  } else if(to.path=='/login'){
+    next()
+  }else {
+    const Authorization = localStorage.getItem('Authorization');
+    const userId = localStorage.getItem('userId');
+    if (Authorization == null || Authorization == '' || userId == null || userId == '') {
       next('/login');
     } else {
-      next();
+      api.userApi.getUserInformation(userId).then(res => {
+        if (res.errCode == '00') {
+          store.commit("COMMIT_LOGIN", { token: Authorization, id: userId, getInfo: false });
+          store.dispatch("SET_USER_INFO", res.data);
+          next()
+        } else {
+          localStorage.setItem('Authorization', '')
+          localStorage.setItem('userId', '')
+          next('/login');
+        }
+      })
     }
   }
 })

@@ -1,21 +1,27 @@
 import axios from 'axios'
-// import { MessageBox, Message } from 'element-ui'
-import router from '../router'
 
 // create an axios instance
-const service = axios.create({
-    baseURL: 'http://localhost:9999', // url = base url + request url
+const http = axios.create({
+    baseURL: require('@/config.json').server, // url = base url + request url
     // withCredentials: true, // send cookies when cross-domain requests
-    timeout: 5000, // request timeout
-
+    timeout: 10000, // request timeout
+    headers: {
+        // 'Content-Type': 'application/json;charset=UTF-8',
+        // 'Authorization': `Super Knowledge ${localStorage.getItem('Authorization')}`
+    }
 })
 
-service.defaults.headers.common['Content-Type'] = 'application/json;charset=UTF-8'
-service.defaults.headers.common['Authorization'] = `Super Knowledge ${localStorage.getItem('Authorization')}`
+// http.defaults.headers.common['Authorization'] = `Super Knowledge ${localStorage.getItem('Authorization')}`
 
-axios.interceptors.request.use(function (config) {
+http.interceptors.request.use(function (config) {
     // Do something before request is sent
-    config.data = JSON.stringify(config.data);
+    config.headers['Authorization'] = `Super Knowledge ${localStorage.getItem('Authorization')}`
+    if (!config.url.includes('image') && config.method == 'post') {
+        config.headers['Content-Type'] = 'application/json'
+        config.data = JSON.stringify(config.data);
+    } else {
+        config.headers['Content-Type'] = 'multipart/form-data'
+    }
     return config;
 }, function (error) {
     // Do something with request error
@@ -23,11 +29,10 @@ axios.interceptors.request.use(function (config) {
     return Promise.reject(error);
 });
 
-// Add a response interceptor
-axios.interceptors.response.use(function (response) {
-    console.log(response)
+http.interceptors.response.use(function (res) {
+    // console.log(res.data)
     // Do something with response data
-    const res = response.data
+    // const res = response.data
     // if(res.status!=1){
     //     Message:({
     //         message:res.errorMessage||'Error',
@@ -38,92 +43,15 @@ axios.interceptors.response.use(function (response) {
     if (res.status == 401) {
         router.push({
             path: "/login",
-            querry: {
+            query: {
                 redirect: router.currentRoute.fullPath
             } //从哪个页面跳转
         })
     }
-    return res;
+    return res.data;
 }, function (error) {
-    // Do something with response error
-    console.log('err' + error) // for debug
-    // Message({
-    //     message: error.message,
-    //     type: 'error',
-    //     duration: 5 * 1000
-    //   })
-    return Promise.reject(error);
-});
 
-/**
- * 封装get方法
- * @param url
- * @param data
- * @returns {Promise}
- */
-// export function fetch(url, params = {}) {
-//     return new Promise((resolve, reject) => {
-//         axios.get(url, {
-//                 params: params
-//             })
-//             .then(response => {
-//                 resolve(response.data);
-//             })
-//             .catch(err => {
-//                 reject(err)
-//             })
-//     })
-// }
+    return Promise.reject(error)
+})
 
-
-/**
- * 封装post请求
- * @param url
- * @param data
- * @returns {Promise}
- */
-// export function post(url, data = {}) {
-//     return new Promise((resolve, reject) => {
-//         axios.post(url, data)
-//             .then(response => {
-//                 resolve(response.data);
-//             }, err => {
-//                 reject(err)
-//             })
-//     })
-// }
-
-/**
- * 封装patch请求
- * @param url
- * @param data
- * @returns {Promise}
- */
-// export function patch(url, data = {}) {
-//     return new Promise((resolve, reject) => {
-//         axios.patch(url, data)
-//             .then(response => {
-//                 resolve(response.data);
-//             }, err => {
-//                 reject(err)
-//             })
-//     })
-// }
-
-/**
- * 封装put请求
- * @param url
- * @param data
- * @returns {Promise}
- */
-// export function put(url, data = {}) {
-//     return new Promise((resolve, reject) => {
-//         axios.put(url, data)
-//             .then(response => {
-//                 resolve(response.data);
-//             }, err => {
-//                 reject(err)
-//             })
-//     })
-// }
-export default service
+export default http

@@ -1,3 +1,6 @@
 module.exports = {
-    outputDir: '..\\Justwriteit-Backend\\src\\main\\resources\\static'
-  }
+  "outputDir": "..\\SK_backend\\src\\main\\resources\\static",
+  "transpileDependencies": [
+    "vuetify"
+  ]
+}

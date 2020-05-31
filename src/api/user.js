@@ -1,8 +1,9 @@
 import request from './http'
+let url = "/account";
 
 export function login(data) {
     return request({
-        url: '/account/login',
+        url: `${url}/login`,
         method: 'post',
         data
     })
@@ -10,7 +11,7 @@ export function login(data) {
 
 export function registration(data) {
     return request({
-        url: '/account/registration',
+        url: `${url}/registration`,
         method: 'post',
         data
     })
@@ -18,15 +19,15 @@ export function registration(data) {
 
 export function sendResetLink(email) {
     return request({
-        url: '/account/resendRegistrationToken',
+        url: `${url}/resendRegistrationToken`,
         method: 'get',
         params: email
     })
 }
 
-export function getUserInformation(user) {
+export function getUserInformation(userId) {
     return request({
-        url: `/user/${user}`,
+        url: `/user/${userId}`,
         method: 'get',
     })
 }

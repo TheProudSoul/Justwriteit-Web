@@ -1,11 +1,10 @@
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+  <transition mode="out-in">
+      <router-view></router-view>
+    </transition>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'app',
@@ -25,6 +24,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
   font-size: 15px;
+  overflow: hidden auto;
 }
 /* CSS */
 body,
